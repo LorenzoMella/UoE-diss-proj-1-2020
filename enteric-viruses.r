@@ -508,103 +508,6 @@ vizions_tb %>% filter(EatCookRawMeat) %>%
 vizions_tb %>% filter(ContactDiar) %>%
   summarise(mean(is_coinf), var(is_coinf))
 
-# Age differences in water consumption WHAT THE HELL ARE THESE TESTS???
-## fisher.test(table(vizions_tb %>% 
-##                     mutate(is_infant = age_cluster == "Infant") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(Tap)))
-## fisher.test(table(vizions_tb %>% 
-##                     mutate(is_infant = age_cluster == "Infant") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(Bottled)))
-## fisher.test(table(vizions_tb %>% 
-##                     mutate(is_infant = age_cluster == "Infant") %>% 
-##                     pull(is_infant), # SIGNIFICANT!
-##                   vizions_tb %>% pull(River)))
-## ## OR = 1.461466; CI = (0.9958073, 2.1654643); CONF. 95%
-## fisher.test(table(vizions_tb %>% 
-##                     mutate(is_infant = age_cluster == "Infant") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(Rain)))
-## fisher.test(table(vizions_tb %>% 
-##                     mutate(is_infant = age_cluster == "Infant") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(Well)))
-## fisher.test(table(vizions_tb %>% 
-##                     mutate(is_infant = age_cluster == "Infant") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(Pond)))
-
-## fisher.test(table(vizions_tb %>% 
-##                     mutate(is_infant = age_cluster == "5-65") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(Tap)))
-## fisher.test(table(vizions_tb %>% 
-##                     mutate(is_infant = age_cluster == "5-65") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(Bottled)))
-## fisher.test(table(vizions_tb %>% # SIGNIFICANT!
-##                     mutate(is_infant = age_cluster == "5-65") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(River)))
-## fisher.test(table(vizions_tb %>% 
-##                     mutate(is_infant = age_cluster == "5-65") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(Rain)))
-## fisher.test(table(vizions_tb %>% # SIGNIFICANT (10%)
-##                     mutate(is_infant = age_cluster == "5-65") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(Well)))
-## fisher.test(table(vizions_tb %>% 
-##                     mutate(is_infant = age_cluster == "5-65") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(Pond)))
-
-## fisher.test(table(vizions_tb %>% # SIGNIFICANT (10%)
-##                     mutate(is_infant = age_cluster == "Elderly") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(Tap)))
-## fisher.test(table(vizions_tb %>% 
-##                     mutate(is_infant = age_cluster == "Elderly") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(Bottled)))
-## fisher.test(table(vizions_tb %>% 
-##                     mutate(is_infant = age_cluster == "Elderly") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(River)))
-## fisher.test(table(vizions_tb %>% 
-##                     mutate(is_infant = age_cluster == "Elderly") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(Rain)))
-## fisher.test(table(vizions_tb %>% 
-##                     mutate(is_infant = age_cluster == "Elderly") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(Well)))
-## fisher.test(table(vizions_tb %>% 
-##                     mutate(is_infant = age_cluster == "Elderly") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(Pond)))
-
-## # Age differences in animal interaction
-## fisher.test(table(vizions_tb %>%
-##                     mutate(is_infant = age_cluster == "Infant") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(ContactDiar)))
-## fisher.test(table(vizions_tb %>% 
-##                     mutate(is_infant = age_cluster == "Infant") %>% 
-##                     pull(is_infant),
-##                   vizions_tb %>% pull(KeepAnimal)))
-## fisher.test(table(vizions_tb %>% 
-##                     mutate(is_infant = age_cluster == "Infant") %>% 
-##                     pull(is_infant), # SIGNIFICANT!
-##                   vizions_tb %>% pull(KillingAnimal)))
-## ## OR = 0.3062859; CI = (0.07974662, 1.03098232); CONF. 95%
-## fisher.test(table(vizions_tb %>% 
-##                     mutate(is_infant = age_cluster == "Infant") %>% 
-##                     pull(is_infant), # SIGNIFICANT!
-##                   vizions_tb %>% pull(EatCookRawMeat)))
-## ## OR = 0.2938543; CI = (0.1877463, 0.4496804); CONF. 95%
-
 # Frequency of deep-sequenced viral infections
 vizions_tb %>% group_by(age_cluster) %>% 
   summarise_at(deep_sequencing_vars, sum) %>% t()
@@ -700,7 +603,7 @@ coinfections_in_detail %>%
 ggsave("./figures/coinfection_pairs_matrix.pdf", width = 7, height = 6.5)
 
 
-# Coinfections by gender (all ages) (NOT VERY INFORMATIVE)
+# Coinfections by gender (all ages)
 vizions_dong_thap %>%
   ggplot(aes(x = is_coinf, fill = Gender)) +
   geom_histogram(position = "dodge")
@@ -825,9 +728,6 @@ vizions_tb %>% filter(Age <= 30) %>% mutate(age_cluster = Age >= 6) %>%
   geom_bar(position = "fill")
 
 
-# DESPITE THE OBVIOUS SAMPLE-IMBALANCE (MORE MALE INFANTS AND MORE FEMALE
-# NON-INFANTS) IT SEEMS THAT THE ADULT DISTRIBUTION IS AFFECTED BY GENDER
-
 # Age group by coinfections (just Dong Thap)
 vizions_dong_thap %>%
   mutate(age_group = cut(Age,
@@ -839,7 +739,6 @@ vizions_dong_thap %>%
 # Coinfections by age group
 vizions_tb %>%# filter(age_group %in% Adult_group) %>% 
   ggplot(aes(x = coinf_class, fill = age_group)) +
-  # GEOM_FREQPOLY OR GEOM_HISTOGRAM
   geom_bar(position = "fill")
 
 # Coinfections by water source type
@@ -928,8 +827,6 @@ ggsurvplot(fit = fit_for_graph, survtest_rural_area_tb, pval = TRUE)
 survdiff(surv_obj ~ rural_area, data = survtest_rural_area_tb)
 remove(survtest_rural_area_tb)
 
-
-
 # Different means of length of illness by macroregion?
 vizions_tb %>%
   ggplot(aes(length_of_illness, fill = macroregion)) +
@@ -948,7 +845,6 @@ fit_for_graph = survfit(surv_obj ~ macroregion,
 ggsurvplot(fit = fit_for_graph, survtest_macroregion_tb, pval = TRUE)
 survdiff(surv_obj ~ macroregion, data = survtest_macroregion_tb)
 remove(survtest_macroregion_tb)
-
 
 # Different means of length of illness by coinfection class?
 wilcox.test(vizions_tb %>% filter(coinf_class == "1") %>%
@@ -999,43 +895,9 @@ ggsave(filename = "./figures/surv-coinf-1-2.pdf",
        width = 7, height = 6)
 remove(survtest_coinf_tb)
 
-# Length of hospitalisation vs age group
-vizions_tb %>%
-  group_by(age_cluster) %>%
-  summarise(mean_length_of_stay = mean(length_of_illness),
-            sd_length_of_stay = sd(`Length of stay`),
-            Prevalence = n())
+### Length of hospitalisation vs age group ###
 
-# Stratified models 
-surv_obj = Surv(time = vizions_tb %>%
-                  filter(age_cluster == "5-65") %>%
-                  pull(`Length of stay`),
-                event = rep(TRUE, length.out =
-                                    nrow(vizions_tb %>%
-                                           filter(age_cluster == "5-65"))))
-
-
-fit_1 = coxph(surv_obj ~ is_coinf, data = vizions_tb %>%
-                  filter(age_cluster == "5-65"))
-
-summary(fit_1)
-
-# Model with age and gender as covariates (THIS WORKS)
-
-surv_obj = Surv(time = vizions_tb %>% pull(`Length of stay`),
-                event = rep(TRUE, length.out = nrow(vizions_tb)))
-
-fit_2 = coxph(surv_obj ~ age_cluster + Gender + SeasonOnset +
-                I(is_coinf >= 4),
-              data = vizions_tb)
-
-summary(fit_2) # significant non-null
-
-# COINFECTIONS HAVE NO EFFECT AS IS, BUT IS_COINF >= 4 DOES
-# SO, EXTREME COINFECTIONS SEEMS TO BE MEANINGFUL
-
-
-# Model with age and gender stratification (PUT IT IN)
+# Model with age and gender stratification
 
 surv_obj = Surv(time = vizions_tb %>% pull(length_of_illness),
                 event = rep(TRUE, length.out = nrow(vizions_tb)))
@@ -1068,31 +930,22 @@ summary(survfit(surv_obj ~ coinf_class + age_cluster,
 surv_obj = Surv(time = vizions_dong_thap %>% pull(length_of_illness),
                 event = rep(TRUE, length.out = nrow(vizions_dong_thap)))
 
-fit_4 = coxph(surv_obj ~ (Rotavirus + Norovirus + Kobuvirus + Mastadenovirus + Sapovirus + Mamastrovirus) * (Salivirus + Picobirnavirus + Parechovirus +  Gammatorquevirus + Enterovirus + Betatorquevirus + Alphatorquevirus) +
+fit_4 = coxph(surv_obj ~ (Rotavirus + Norovirus + Kobuvirus +
+                            Mastadenovirus + Sapovirus +
+                            Mamastrovirus) * (Salivirus +
+                                                Picobirnavirus +
+                                                Parechovirus +
+                                                Gammatorquevirus +
+                                                Enterovirus +
+                                                Betatorquevirus +
+                                                Alphatorquevirus) +
                 strata(age_cluster, Gender),
               data = vizions_dong_thap)
 
-summary(fit_4) # significant non-null
-
-car::vif(fit_4)
-
-anova(fit_4)
-
-fit_4_stepwise = step(fit_4, direction = "both", trace = 0)
-
-summary(fit_4_stepwise)
-
-cox.zph(fit_4_stepwise)
+summary(fit_4)
 
 
-fit_4 = coxph(surv_obj ~ (Rotavirus + Norovirus + Mastadenovirus + Sapovirus + Mamastrovirus + has_uncommon_virus + Sapovirus:Mamastrovirus + Mamastrovirus:has_uncommon_virus) +
-                strata(age_cluster, Gender),
-              data = vizions_dong_thap)
-
-
-
-
-# Test by age and virus (REPORTING THE SIGNIFICANT ONLY)
+# Test by age and virus
 survtest_tb = vizions_tb %>%
   filter(is_coinf > 0 & age_cluster == "Infant")
 surv_obj = Surv(time = survtest_tb %>% pull(length_of_illness),
@@ -1134,7 +987,7 @@ survdiff(surv_obj ~ Sapovirus + strata(Gender),
                         data = survtest_tb)
 
 
-# Test by region and virus (REPORTING THE SIGNIFICANT ONLY)
+# Test by region and virus
 survtest_tb = vizions_tb %>%
   filter(is_coinf > 0 & macroregion == "South")
 surv_obj = Surv(time = survtest_tb %>% pull(length_of_illness),
@@ -1167,7 +1020,7 @@ survdiff(surv_obj ~ Mastadenovirus + strata(Gender, age_cluster),
                         data = survtest_tb)
 
 
-# Graphs (GOOD GRAPH SHOWING LITTLE DIFFERENCE AMONG COINF. CLASSES)
+# Graphs
 surv_obj = Surv(time = vizions_tb %>% filter(is_coinf >= 0)
                 %>% pull(length_of_illness),
                 event = rep(TRUE, length.out = nrow(vizions_tb %>%
@@ -1180,8 +1033,6 @@ fit_for_graph = survfit(surv_obj ~ coinf_class,
 ggsurvplot_facet(fit = fit_for_graph, vizions_tb %>%
                                         filter(is_coinf >= 0),
                  facet.by = "age_cluster")
-
-# WITH THIS I COMPLICATED THE MODEL BUT REDUCED THE BIC
 
 # Graphs showing estimated survival functions for the three age clusters
 surv_times = vizions_tb %>% filter(age_cluster == "Infant") %>%
@@ -1221,21 +1072,8 @@ ggsurvplot(fit_for_graph, pval = T, conf.int = T)
 #################################################
 
 
-# MUCOIDSTOOL APPEARS TO BE CORRELATED WITH NUMBERDIAREPI
-# AND WITH ABDOMINALPAIN WITHING THE "YOUNG" GROUP
-
-for (cluster in c("Infant", "5-65", "Elderly")) {
-  printf("Age cluster = %s\n", cluster)
-  print(cor(vizions_dong_thap %>% filter(age_cluster == cluster) %>%
-              select(ContactDiar, BloodStool, MucoidStool,
-                     AbdominalPain, ThreeDaysFever),
-            use = "complete.obs"))
-}
-
 # Fisher exact test to compare coinfection vs no infection between
 # genders, for each age strata
-# NO SIGNIFICANT DEPARTURE OF THE OR FROM 1
-# GENDER DOESN'T MAKE A DIFFERENCE
 vizions_dong_thap %>% filter(age_cluster == "Elderly") %>%
   group_by(is_coinf >= 2) %>%
   summarise(male = sum(Gender == "Male"),
@@ -1244,15 +1082,6 @@ vizions_dong_thap %>% filter(age_cluster == "Elderly") %>%
   as.matrix() %>%
   fisher.test
 
-
-# Find meaningful risk factors
-# INSTEAD OF CONSIDERING ALL POSSIBLE INTERACTIONS WITH AGE,
-# SELECT THE MOST MEANINGFUL BY DATA EXPLORATION
-
-# VERIFY THE MODEL EMPIRICALLY (E.G., CHECK WHETHER IT LEARN THE MEAN ETC.)
-
-## ssr <- sum(residuals(fit, type="deviance")^2)
-## pchisq(ssr, 99999)
 
 ### Stepwise selection on the full model (4 kinds) ###
 
@@ -1415,32 +1244,7 @@ par(mfrow = c(2, 2))
 plot(winning_coinf_obj)
 
 
-
-## # STRATIFY BY AGE
-## coinf_single_obj = glm(formula = is_coinf ~ SeasonOnset +
-##                          Well + Rain + Pond + River + Bottled +
-##                          ward_city_distance + Gender + KeepAnimal +
-##                          KillingAnimal + EatCookRawMeat + ContactDiar,
-##                     family = poisson(log),
-##                     data = vizions_tb %>%
-##                       filter(age_cluster == "Infant") %>% 
-##                       mutate_at("ward_city_distance", standardise) %>% 
-##                       filter_at(c("Age", "Gender", "SeasonOnset",
-##                           "ContactDiar", "KeepAnimal", "ward_city_distance",
-##                           "KillingAnimal", "EatCookRawMeat",
-##                           "Tap", "Well", "Rain", "Pond", "River", "Bottled"), .vars_predicate = ~!is.na(.x)))
-
-## summary(coinf_single_obj)
-## deviance_test(coinf_single_obj)
-
-## car::vif(coinf_single_obj)
-
-## blah = step(coinf_single_obj, direction = "both", trace = 0)
-## summary(blah)
-## deviance_test(blah)
-
-
-# ORDINAL REGRESSION
+# Ordinal regression
 coinf_ordinal_obj = MASS::polr(formula = is_coinf ~ age_cluster +
                                  SeasonOnset + Rain + Pond +
                                  River + Bottled +
@@ -1465,42 +1269,12 @@ stepwise_ordinal_obj = step(coinf_ordinal_obj, direction = "both",
 summary(stepwise_ordinal_obj)
 
 
-# LYMPHOCYTESRESULT IS HEAVILY CORRELATED WITH NEUTROPHILSRESULT
-## blood_reg_obj = glm(is_coinf ~ HaemoglobinResult +
-##                       NeutrophilsResult +
-##                       LymphocytesResult +
-##                       EosinophilsResult +
-##                       PlateletsResult,
-##                     family = poisson,
-##                     data = vizions_tb %>%
-##                       filter(age_cluster == "Infant") %>%
-##                       mutate_at(blood_test_vars, standardise))
-## summary(blood_reg_obj)
-
-## blah = MASS::stepAIC(blood_reg_obj)
-
-
-## logistic_reg_obj = glm(formula = has_coinf ~ Gender + age_cluster +
-##                          ContactDiar + (KeepAnimal +
-##                          KillingAnimal + EatCookRawMeat) * macroregion +
-##                       Bottled + Pond + River + Rain + Well,
-##                        family = binomial,
-##                        data = vizions_tb %>%
-##                          mutate(has_coinf = is_coinf >= 2))
-
-## summary(logistic_reg_obj)
-
-## stepwise_coinf_logistic_obj = step(logistic_reg_obj,
-##                                    direction = "both",
-##                             trace = 0)
-
-## summary(stepwise_coinf_logistic_obj)
-
 
 
 ######################################
 #  Disease Severity vs Coinfections  #
 ######################################
+
 
 # Test of dependence between single enteric infections and symptoms 
 fisher_exact_test_cols(vizions_tb %>% filter(age_cluster == "Infant",
@@ -1617,17 +1391,7 @@ summary(backward_selection_obj)
 
 deviance_test(backward_selection_obj)
 
-# OTHER ANALYSES
-
-corrected_reg_obj = glm(formula = AbdominalPain ~ Rotavirus + Sapovirus + Mamastrovirus,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter (age_cluster != "Infant" & Gender == "Female"))
-summary(corrected_reg_obj)
-deviance_test(corrected_reg_obj)
-
-# BloodStool (NON STRATIFIED)  ## BOTH MODELS OK AND SIMILAR.
-## RANDOM EFFECTS HAS INCREASE AIC
+# BloodStool (NON STRATIFIED)
 logistic_reg_obj = glm(formula = BloodStool ~ is_coinf +
                          (age_cluster + Gender + macroregion),
                        family = binomial,
@@ -1647,59 +1411,8 @@ hoslem_for_logreg(logistic_reg_obj)
 
 BIC(logistic_reg_obj)
 
-# Bloodstool
-logistic_reg_obj = glm(formula = BloodStool ~ is_coinf,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter (age_cluster == "Infant" &
-                                   Gender == "Female"))
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
 
-logistic_reg_obj = glm(formula = BloodStool ~ is_coinf,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter (age_cluster == "Infant" &
-                                   Gender == "Male"))
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
-
-
-logistic_reg_obj = glm(formula = BloodStool ~ is_coinf,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter (age_cluster == "5-65" &
-                                   Gender == "Female"))
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
-
-logistic_reg_obj = glm(formula = BloodStool ~ is_coinf.,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter (age_cluster != "5-65" &
-                                   Gender == "Male"))
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
-
-logistic_reg_obj = glm(formula = BloodStool ~ is_coinf,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter (age_cluster == "Elderly" &
-                                   Gender == "Female"))
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
-
-logistic_reg_obj = glm(formula = BloodStool ~ is_coinf,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter (age_cluster != "Elerly" &
-                                   Gender == "Male"))
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
-
-
-# MucoidStool (NON STRATIFIED)  ## BOTH MODELS OK AND SIMILAR.
-## RANDOM EFFECTS HAS INCREASE AIC
+# MucoidStool (NON STRATIFIED)
 logistic_reg_obj = glm(formula = MucoidStool ~ age_cluster,
                        family = binomial,
                        data = vizions_tb %>% filter(is_coinf >= 1))
@@ -1734,8 +1447,6 @@ summary(random_effect_obj)
 BIC(random_effect_obj)
 
 
-
-
 # AbdominalPain (Dong Thap)
 # Infant vs noninfant is significant
 fisher.test(vizions_dong_thap %>%
@@ -1756,14 +1467,13 @@ fisher.test(vizions_dong_thap %>%
               pull(AbdominalPain))
 
 # HENCE, NO STRATIFICATION BY GENDER, ONLY INFANT VS NON-INFANT
-logistic_reg_obj = glm(formula = AbdominalPain ~ coinf_class + age_cluster + Gender,
+logistic_reg_obj = glm(formula = ThreeDaysFever ~ coinf_class +
+                         age_cluster + Gender,
                        family = binomial,
                        data = vizions_dong_thap)
 summary(logistic_reg_obj)
 
 hoslem_for_logreg(logistic_reg_obj)
-
-
 
 # ThreeDaysFever (Dong Thap)
 # Infant vs noninfant is significant
@@ -1785,8 +1495,8 @@ fisher.test(vizions_dong_thap %>%
             vizions_dong_thap %>%
               pull(BloodStool))
 
-# HENCE, NO STRATIFICATION BY GENDER, ONLY INFANT VS NON-INFANT
-logistic_reg_obj = glm(formula = ThreeDaysFever ~ coinf_class + I(age_cluster == "Infant"),
+logistic_reg_obj = glm(formula = ThreeDaysFever ~ coinf_class
+                       + I(age_cluster == "Infant"),
                        family = binomial,
                        data = vizions_dong_thap)
 summary(logistic_reg_obj)
@@ -1794,32 +1504,6 @@ summary(logistic_reg_obj)
 hoslem_for_logreg(logistic_reg_obj)
 
 confint(logistic_reg_obj)
-
-
-
-logistic_reg_obj = glm(formula = MucoidStool ~ saturated_coinf,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter (age_cluster == "Infant" &
-                                   Gender == "Male"))
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
-
-logistic_reg_obj = glm(formula = MucoidStool ~ saturated_coinf,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter (age_cluster != "Infant" &
-                                   Gender == "Female"))
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
-
-logistic_reg_obj = glm(formula = MucoidStool ~ saturated_coinf,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter (age_cluster != "Infant" &
-                                   Gender == "Male"))
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
 
 
 # AbdominalPain (NON STRATIFIED) (FINAL - COINFECTIONS NOT SIGNIFICANT)
@@ -1846,56 +1530,13 @@ summary(logistic_reg_obj)
 deviance_test(logistic_reg_obj)
 
 
-
-# AbdominaPain (STRATIFIED)
-logistic_reg_obj = glm(formula = AbdominalPain ~ saturated_coinf,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter (age_cluster == "Infant" &
-                                   Gender == "Female"))
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
-
-logistic_reg_obj = glm(formula = AbdominalPain ~ saturated_coinf,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter (age_cluster == "Infant" &
-                                   Gender == "Male"))
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
-
-logistic_reg_obj = glm(formula = AbdominalPain ~ saturated_coinf,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter (age_cluster != "Infant" &
-                                   Gender == "Female"))
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
-
-logistic_reg_obj = glm(formula = AbdominalPain ~ saturated_coinf,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter (age_cluster != "Infant" &
-                                   Gender == "Male"))
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
-
-
 # ThreeDaysFever (NON STRATIFIED)
-logistic_reg_obj = lme4::glmer(formula = ThreeDaysFever ~ saturated_coinf +
+logistic_reg_obj = lme4::glmer(formula = ThreeDaysFever ~
+                                 saturated_coinf +
                          age_cluster + SeasonOnset +
                             + (1 | macroregion),
                        family = binomial,
                        data = vizions_tb %>% filter(has_common_virus))
-summary(logistic_reg_obj)
-
-# MIRRORING THE STEPWISE-SELECTED MODEL BELOW
-logistic_reg_obj = lme4::glmer(formula = ThreeDaysFever ~ is_coinf +
-                         I(age_cluster == "Infant") +
-                          has_uncommon_virus +
-                         + (1 | macroregion),
-                       family = binomial,
-                       data = vizions_tb)
 summary(logistic_reg_obj)
 
 
@@ -1912,9 +1553,18 @@ stepwise_obj = step(logistic_reg_obj, direction = "both", trace = 0)
 summary(stepwise_obj)
 
 
+# MIRRORING THE STEPWISE-SELECTED MODEL ABOVE
+logistic_reg_obj = lme4::glmer(formula = ThreeDaysFever ~ is_coinf +
+                         I(age_cluster == "Infant") +
+                          has_uncommon_virus +
+                         + (1 | macroregion),
+                       family = binomial,
+                       data = vizions_tb)
+summary(logistic_reg_obj)
 
-# WORKS BEST WITH COINF_CLASS OR SATURATED_COINF (FINAL)
-logistic_reg_obj = glm(formula = ThreeDaysFever ~ is_coinf +
+
+# ThreeDaysFever (FINAL)
+logistic_reg_obj = glm(formula = ThreeDaysFever ~ coinf_class +
                          (age_cluster + macroregion + Gender) +
                          SeasonOnset,
 family = binomial,
@@ -1930,32 +1580,6 @@ hoslem_for_logreg(stepwise_obj)
 
 confint(stepwise_obj)
 
-# ThreeDaysFever (STRATIFIED)
-logistic_reg_obj = glm(formula = ThreeDaysFever ~ is_coinf,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter (age_cluster == "Infant" &
-                                   Gender == "Female"))
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
-
-logistic_reg_obj = glm(formula = ThreeDaysFever ~ is_coinf,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter (age_cluster == "Infant" &
-                                   Gender == "Male"))
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
-
-
-
-logistic_reg_obj = glm(formula = ThreeDaysFever ~ is_coinf,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter (age_cluster != "5-65" &
-                                   Gender == "Male"))
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
 
 plot(0:5, plogis(coefficients(logistic_reg_obj)[1] +
                    (0:5) * coefficients(logistic_reg_obj)[2]),
@@ -1967,15 +1591,6 @@ plot_points = vizions_tb %>% filter (age_cluster != "5-65" &
              pull(means)
 lines(0:(length(plot_points) - 1), plot_points)
 remove(plot_points)
-
-logistic_reg_obj = glm(formula = ThreeDaysFever ~ is_coinf,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter (age_cluster != "Infant" &
-                                   Gender == "Male"))
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
-
 
 # NumberDiarEpi - graphs
 vizions_tb %>% ggplot(aes(x = coinf_class, y = NumberDiarEpi,
@@ -2048,6 +1663,7 @@ numberdiarepi_reg_obj = glm(formula = NumberDiarEpi ~
 summary(numberdiarepi_reg_obj)
 
 deviance_test(numberdiarepi_reg_obj)
+
 
 
 ###############################################
@@ -2357,46 +1973,6 @@ vizions_tb %>%
   geom_col()
 
 
-# Viral density estimation (COMMON VIRUSES)
-dev.new()
-ggmap(get_stamenmap(bbox = c(top = data_presence_bbox[["top"]],
-                             left = data_presence_bbox[["left"]],
-                             bottom = data_presence_bbox[["bottom"]],
-                             right = data_presence_bbox[["right"]]),
-                    zoom = 7), extent = "normal") +
-  geom_point(data = vizions_tb %>%
-               filter(Rotavirus | Norovirus | Kobuvirus | Mastadenovirus |
-                        Sapovirus | Mamastrovirus),
-             aes(x = LONGITUDE, y = LATITUDE, color = ))
-
-# Viral density estimation (COMMON VIRUSES)
-dev.new()
-ggmap(get_stamenmap(bbox = c(top = data_presence_bbox[["top"]],
-                             left = data_presence_bbox[["left"]],
-                             bottom = data_presence_bbox[["bottom"]],
-                             right = data_presence_bbox[["right"]]),
-                    zoom = 7), extent = "normal") +
-  geom_point(data = vizions_tb %>%
-               filter(Rotavirus),
-             aes(x = LONGITUDE, y = LATITUDE, color = "red")) +
-  geom_point(data = vizions_tb %>%
-               filter(Norovirus),
-             aes(x = LONGITUDE, y = LATITUDE, color = "green")) +
-  geom_point(data = vizions_tb %>%
-               filter(Kobuvirus),
-             aes(x = LONGITUDE, y = LATITUDE, color = "orange")) +
-  geom_point(data = vizions_tb %>%
-               filter(Mastadenovirus),
-             aes(x = LONGITUDE, y = LATITUDE, color = "blue")) +
-  geom_point(data = vizions_tb %>%
-               filter(Sapovirus),
-             aes(x = LONGITUDE, y = LATITUDE, color = "magenta")) +
-  geom_point(data = vizions_tb %>%
-               filter(Mamastrovirus),
-             aes(x = LONGITUDE, y = LATITUDE, color = "yellow")) +
-  scale_color_discrete(name = "Enteric Virus",
-    labels = c("Rotavirus", "Mastadenovirus",  "Norovirus",
-                        "Kobuvirus", "Sapovirus", "Mamastrovirus"))
 
 
 # In Dong Thap only
@@ -2474,17 +2050,7 @@ ggmap(get_stamenmap(bbox = c(top = dong_thap_bbox[["top"]],
              aes(x = LONGITUDE, y = LATITUDE, color = Mamastrovirus))
 
 
-ggmap(get_stamenmap(bbox = c(top = dong_thap_bbox[["top"]],
-                             left = dong_thap_bbox[["left"]],
-                             bottom = dong_thap_bbox[["bottom"]],
-                             right = dong_thap_bbox[["right"]]),
-                    zoom = 11), extent = "normal") +
-  geom_point(data = vizions_dong_thap %>%
-               filter(Sapovirus) %>% 
-               filter(age_cluster == "Infant"), 
-             aes(x = LONGITUDE, y = LATITUDE, color = "red"))
-
-
+# Density estimation map
 ggmap(get_stamenmap(bbox = c(top = dong_thap_bbox[["top"]],
                              left = dong_thap_bbox[["left"]],
                              bottom = dong_thap_bbox[["bottom"]],
@@ -2510,9 +2076,11 @@ ggmap(get_stamenmap(bbox = c(top = dong_thap_bbox[["top"]],
              aes(x = LONGITUDE, y = LATITUDE, color = "yellow")) +
   scale_color_discrete(name = "Enteric Virus",
     labels = c("Rotavirus", "Mastadenovirus",  "Norovirus",
-                        "Kobuvirus", "Sapovirus", "Mamastrovirus"))
+               "Kobuvirus", "Sapovirus", "Mamastrovirus"))
 
 
+# Patchwork of single density estimations
+# THEY ARE UNSURPRISINGLY CLUSTERED ON THE BIG CITY, CAO LANH
 (ggmap(get_stamenmap(bbox = c(top = dong_thap_bbox[["top"]],
                              left = dong_thap_bbox[["left"]],
                              bottom = dong_thap_bbox[["bottom"]],
@@ -2566,11 +2134,7 @@ ggmap(get_stamenmap(bbox = c(top = dong_thap_bbox[["top"]],
        extent = "normal") +
     geom_density2d(data = vizions_dong_thap %>%
                filter(Mamastrovirus),
-               aes(x = LONGITUDE, y = LATITUDE)))
-
-
-
-  +
+               aes(x = LONGITUDE, y = LATITUDE)))  +
   geom_density2d(data = vizions_dong_thap %>%
                filter(Kobuvirus),
              aes(x = LONGITUDE, y = LATITUDE, color = "orange")) +
