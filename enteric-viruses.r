@@ -1,6 +1,6 @@
 ################################################
 #                                              #
-#    Title: Enteric Viruses (provisional)      #
+#    Title: Enteric Viruses                    #
 #                                              #
 #    Author: Lorenzo Mella                     #
 #                                              #
@@ -144,9 +144,9 @@ hoslem_for_logreg = function(model, g = NULL) {
 }
 
 
-##################################
-#  Dataset Loading and Cleaning  #
-##################################
+#########################
+#  Dataset Preparation  #
+#########################
 
 
 ### Load dataset ###
@@ -166,14 +166,20 @@ vizions_tb = vizions_tb %>%
 
 # Name relevant variable subsets for convenience
 rt_pcr_vars = vizions_tb %>% select(42:55) %>% colnames()
+
 deep_sequencing_vars = vizions_tb %>% select(56:87) %>% colnames()
+
 symptom_covariates = vizions_tb %>% select(18:22) %>% colnames()
+
 social_covariates = c("KeepAnimal", "KillingAnimal",
                       "EatCookRawMeat", "ContactDiar")
+
 date_vars = c("Date of hospital entry", "AdminDate",
               "DateOnset", "DateDischOrDeath")
+
 common_viruses = c("Rotavirus", "Norovirus", "Kobuvirus",
                    "Mastadenovirus", "Sapovirus", "Mamastrovirus")
+
 uncommon_viruses = c("Alphapapillomavirus", "Alphapolyomavirus",
 		     "Alphatorquevirus", "Betapapillomavirus",
 		     "Betapolyomavirus", "Betatorquevirus",
@@ -216,6 +222,7 @@ dense_settlements = c("Cai Tau Ha", "Sa Dec", "Lap Vo", "TP. Cao Lanh",
                       "Dong Ha", "Quang Tri", "Kien Giang",
                       "Dong Hoi", "Ba Don", "Hoan Lao")
 
+# Coordinates extrapolated from OpenStreetMap
 dense_settlement_coors = matrix(c(10.259731, 105.870438,
                                   10.2943716, 105.7588147,
 10.3610793, 105.5204952, 10.4620322, 105.6357948,
@@ -236,7 +243,6 @@ dense_settlement_coors = matrix(c(10.259731, 105.870438,
 17.7558619, 106.4203402, 17.5833118, 106.5338218),
 byrow = TRUE, ncol = 2)
 
-
 # Compute the geodetic distance of all cohort members
 # from the closest dense settlement
 ward_lats = vizions_tb %>% pull(LATITUDE)
@@ -254,11 +260,9 @@ remove(ward_lats, ward_longs)
 vizions_tb = vizions_tb %>%
   add_column(ward_city_distance, .after = "LATITUDE")
 
-# Define a "rural area" indicator (a distance of 8 km from city centre
-# curiously balances the viruses)
+# Define a "rural area" indicator
 vizions_tb = vizions_tb %>%
   mutate(rural_area = ward_city_distance > 8)
-
 
 
 ### Format conversions ###
@@ -308,15 +312,19 @@ vizions_tb = vizions_tb %>%
 vizions_tb = vizions_tb %>%
   mutate_at(water_source_vars, ~as.logical(.x))
 
+
 ### Coinfection count ###
 
-# It is, then, safe to assume that the the NAs in the is_coinf variable
+# One can verify that is_coinf is the sum of the deep-sequencing
+# binary results.
+# It is then safe to assume that the the NAs in the is_coinf variable
 # should be interpreted as zeros
 vizions_tb = vizions_tb %>%
   mutate(is_coinf = ifelse(is.na(is_coinf), 0, is_coinf))
 
-# Add a factor representing coinfections
-coinf_catchall = 2L
+# Add a factor representing coinfections in classes
+# e.g.: 0, 1, 2+
+coinf_catchall = 2L # saturating value
 vizions_tb = vizions_tb %>%
   mutate(coinf_class = cut(is_coinf,
                         breaks = c(-Inf, 0:(coinf_catchall - 1), Inf),
@@ -400,7 +408,7 @@ vizions_tb = vizions_tb %>%
 # Seasonality deduced from DateOnset
 
 # Horrible non-vectorised date-to-season converter
-# (I didn't implement the boundary corrections. It shouldn't matter)
+# (I didn't implement yearly boundary corrections. It shouldn't matter)
 season = function(dates) {
   prev_wsolstice = as.Date("2000-12-21")
   sequinox = as.Date("2001-03-20")
@@ -570,7 +578,9 @@ pair_count = function(data, varnames, varnames2 = NULL,
 }
 
 coinfections_in_detail =
-  as_tibble(pair_count(vizions_tb,                                             c(common_viruses, "has_uncommon_virus"), suppress_diag = TRUE),
+  as_tibble(pair_count(vizions_tb,
+                       c(common_viruses, "has_uncommon_virus"),
+                       suppress_diag = TRUE),
                                    rownames = "virus1") %>%
   gather(key = "virus2", value = "num_cases", -virus1)
 
@@ -726,7 +736,6 @@ dev.new()
 vizions_tb %>% filter(Age <= 30) %>% mutate(age_cluster = Age >= 6) %>% 
   ggplot(aes(x = age_cluster, fill = has_uncommon_virus)) +
   geom_bar(position = "fill")
-
 
 # Age group by coinfections (just Dong Thap)
 vizions_dong_thap %>%
@@ -924,7 +933,6 @@ surv_obj = Surv(time = vizions_tb %>% filter(is_coinf > 0)
 
 summary(survfit(surv_obj ~ coinf_class + age_cluster,
          data = vizions_tb %>% filter(is_coinf > 0)))
-
 
 # Model with viral interactions
 surv_obj = Surv(time = vizions_dong_thap %>% pull(length_of_illness),
@@ -1963,7 +1971,7 @@ vizions_tb %>%
   ggplot(aes(x = ProvincialCity, y = value, fill = Enteric_virus)) +
   geom_col()
 
-# Visualise viruses per city centre in Dong Thap
+# Visualise viruses per city centre in the other regions
 vizions_tb %>%
   filter(macroregion != "South") %>% 
   group_by(ProvincialCity) %>% 
@@ -1971,9 +1979,6 @@ vizions_tb %>%
   pivot_longer(cols = 2:7, names_to = "Enteric_virus") %>% 
   ggplot(aes(x = ProvincialCity, y = value, fill = Enteric_virus)) +
   geom_col()
-
-
-
 
 # In Dong Thap only
 dev.new()
