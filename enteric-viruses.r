@@ -1327,7 +1327,7 @@ arm::binnedplot(fitted(backward_selection_obj),
            residuals(backward_selection_obj, type = "response"))
 
 
-# Logistic Regression on Three Days of Fever
+# Logistic Regression on Three Days of Fever (with common viruses)
 logistic_reg_obj = glm(formula = ThreeDaysFever ~ age_cluster +
                          SeasonOnset + Gender + ward_city_distance +
                          (Rotavirus + Norovirus +
@@ -1355,51 +1355,7 @@ arm::binnedplot(fitted(backward_selection_obj),
            residuals(backward_selection_obj, type = "response"))
 
 
-
-
-# Mucoid stool interacts with a coinf class
-logistic_reg_obj = glm(formula = ThreeDaysFever ~ age_cluster + SeasonOnset +
-                         Gender + ward_city_distance +
-                         coinf_class,
-                       family = binomial,
-                       data = vizions_tb %>% mutate_at(c("is_coinf",
-                                                         "ward_city_distance"),
-                                                       standardise))
-
-summary(logistic_reg_obj)
-hoslem_for_logreg(logistic_reg_obj)
-
-car::vif(logistic_reg_obj)
-
-backward_selection_obj = step(logistic_reg_obj, direction = "both",
-                              trace = 0)
-
-summary(backward_selection_obj)
-hoslem_for_logreg(backward_selection_obj)
-
-
-# ThreeDaysFever interacts with a coinf class
-logistic_reg_obj = glm(formula = ThreeDaysFever ~ age_cluster + SeasonOnset +
-                         Gender + ward_city_distance +
-                         coinf_class,
-                       family = binomial,
-                       data = vizions_tb %>% mutate_at(c("is_coinf",
-                                                         "ward_city_distance"),
-                                                       standardise))
-
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
-
-car::vif(logistic_reg_obj)
-
-backward_selection_obj = step(logistic_reg_obj, direction = "both",
-                              trace = 0)
-
-summary(backward_selection_obj)
-
-deviance_test(backward_selection_obj)
-
-# BloodStool (NON STRATIFIED)
+# BloodStool (UNUSED)
 logistic_reg_obj = glm(formula = BloodStool ~ is_coinf +
                          (age_cluster + Gender + macroregion),
                        family = binomial,
@@ -1420,7 +1376,7 @@ hoslem_for_logreg(logistic_reg_obj)
 BIC(logistic_reg_obj)
 
 
-# MucoidStool (NON STRATIFIED)
+# MucoidStool (UNUSED)
 logistic_reg_obj = glm(formula = MucoidStool ~ age_cluster,
                        family = binomial,
                        data = vizions_tb %>% filter(is_coinf >= 1))
@@ -1455,53 +1411,48 @@ summary(random_effect_obj)
 BIC(random_effect_obj)
 
 
-# AbdominalPain (Dong Thap)
-# Infant vs noninfant is significant
-fisher.test(vizions_dong_thap %>%
-              mutate(is_infant = age_cluster == "Infant") %>%
-              pull(is_infant),
-          vizions_dong_thap %>% pull(AbdominalPain))
-
-# 5-65 vs Elderly is not significant
-fisher.test(vizions_dong_thap %>% filter(age_cluster != "Infant") %>%
-              pull(age_cluster),
-            vizions_dong_thap %>% filter(age_cluster != "Infant") %>%
-              pull(AbdominalPain))
-
-# Gender highly non-significant
-fisher.test(vizions_dong_thap %>%
-              pull(Gender),
-            vizions_dong_thap %>%
-              pull(AbdominalPain))
-
-# HENCE, NO STRATIFICATION BY GENDER, ONLY INFANT VS NON-INFANT
-logistic_reg_obj = glm(formula = ThreeDaysFever ~ coinf_class +
-                         age_cluster + Gender,
+# ThreeDaysFever interacts with a coinf class
+logistic_reg_obj = glm(formula = ThreeDaysFever ~ age_cluster +
+                         SeasonOnset + Gender + ward_city_distance +
+                         coinf_class,
                        family = binomial,
-                       data = vizions_dong_thap)
+                       data = vizions_tb %>%
+                         mutate_at(c("is_coinf", "ward_city_distance"),
+                                   standardise))
+
 summary(logistic_reg_obj)
+deviance_test(logistic_reg_obj)
 
-hoslem_for_logreg(logistic_reg_obj)
+car::vif(logistic_reg_obj)
 
-# ThreeDaysFever (Dong Thap)
+backward_selection_obj = step(logistic_reg_obj, direction = "both",
+                              trace = 0)
+
+summary(backward_selection_obj)
+
+deviance_test(backward_selection_obj)
+
+
+
+# ThreeDaysFever (Dong Thap) (FINAL)
 # Infant vs noninfant is significant
 fisher.test(vizions_dong_thap %>%
               mutate(is_infant = age_cluster == "Infant") %>%
               pull(is_infant),
-          vizions_dong_thap %>% pull(BloodStool))
+          vizions_dong_thap %>% pull(ThreeDaysFever))
 
 # 5-65 vs Elderly is not significant
 fisher.test(vizions_dong_thap %>% filter(age_cluster != "Infant") %>%
               mutate(is_elderly = age_cluster == "Elderly") %>% 
               pull(is_elderly),
             vizions_dong_thap %>% filter(age_cluster != "Infant") %>%
-              pull(BloodStool))
+              pull(ThreeDaysFever))
 
-# Gender highly non-significant
+# Gender non-significant
 fisher.test(vizions_dong_thap %>%
               pull(Gender),
             vizions_dong_thap %>%
-              pull(BloodStool))
+              pull(ThreeDaysFever))
 
 logistic_reg_obj = glm(formula = ThreeDaysFever ~ coinf_class
                        + I(age_cluster == "Infant"),
@@ -1514,7 +1465,29 @@ hoslem_for_logreg(logistic_reg_obj)
 confint(logistic_reg_obj)
 
 
-# AbdominalPain (NON STRATIFIED) (FINAL - COINFECTIONS NOT SIGNIFICANT)
+
+# AbdominalPain (UNUSED - COINFECTIONS NOT SIGNIFICANT)
+
+# Dependence on age cluster and Gender
+# Infant vs non-infant
+fisher.test(vizions_dong_thap %>%
+              mutate(is_infant = age_cluster == "Infant") %>%
+              pull(is_infant),
+          vizions_dong_thap %>% pull(AbdominalPain))
+
+# 5-65 vs Elderly
+fisher.test(vizions_dong_thap %>% filter(age_cluster != "Infant") %>%
+              pull(age_cluster),
+            vizions_dong_thap %>% filter(age_cluster != "Infant") %>%
+              pull(AbdominalPain))
+
+# Gender
+fisher.test(vizions_dong_thap %>%
+              pull(Gender),
+            vizions_dong_thap %>%
+              pull(AbdominalPain))
+
+
 logistic_reg_obj = glm(formula = AbdominalPain ~ coinf_class *
                          (age_cluster + Gender) + 
                          SeasonOnset + macroregion,
@@ -1529,76 +1502,6 @@ abdpain_stepwise_obj = step(logistic_reg_obj, direction = "both",
 
 summary(abdpain_stepwise_obj)
 
-logistic_reg_obj = glmer(formula = AbdominalPain ~ (saturated_coinf +
-                         age_cluster) + Gender + SeasonOnset +
-                            (1 | macroregion) + (age_cluster | macroregion),
-                       family = binomial,
-                       data = vizions_tb)
-summary(logistic_reg_obj)
-deviance_test(logistic_reg_obj)
-
-
-# ThreeDaysFever (NON STRATIFIED)
-logistic_reg_obj = lme4::glmer(formula = ThreeDaysFever ~
-                                 saturated_coinf +
-                         age_cluster + SeasonOnset +
-                            + (1 | macroregion),
-                       family = binomial,
-                       data = vizions_tb %>% filter(has_common_virus))
-summary(logistic_reg_obj)
-
-
-logistic_reg_obj = glm(ThreeDaysFever ~ coinf_class +
-                         (age_cluster + Gender + macroregion) +
-                         SeasonOnset,
-                       family = binomial,
-                       data = vizions_tb %>%
-                         filter(has_common_virus))
-summary(logistic_reg_obj)
-
-stepwise_obj = step(logistic_reg_obj, direction = "both", trace = 0)
-
-summary(stepwise_obj)
-
-
-# MIRRORING THE STEPWISE-SELECTED MODEL ABOVE
-logistic_reg_obj = lme4::glmer(formula = ThreeDaysFever ~ is_coinf +
-                         I(age_cluster == "Infant") +
-                          has_uncommon_virus +
-                         + (1 | macroregion),
-                       family = binomial,
-                       data = vizions_tb)
-summary(logistic_reg_obj)
-
-
-# ThreeDaysFever (FINAL)
-logistic_reg_obj = glm(formula = ThreeDaysFever ~ coinf_class +
-                         (age_cluster + macroregion + Gender) +
-                         SeasonOnset,
-family = binomial,
-                       data = vizions_tb %>% filter(is_coinf >= 1))
-summary(logistic_reg_obj)
-
-hoslem_for_logreg(logistic_reg_obj)
-
-stepwise_obj = step(logistic_reg_obj, direction = "both", trace = 0)
-summary(stepwise_obj)
-
-hoslem_for_logreg(stepwise_obj)
-
-confint(stepwise_obj)
-
-
-plot(0:5, plogis(coefficients(logistic_reg_obj)[1] +
-                   (0:5) * coefficients(logistic_reg_obj)[2]),
-     col = "red")
-plot_points = vizions_tb %>% filter (age_cluster != "5-65" &
-                                    Gender == "Male") %>%
-             group_by(is_coinf) %>%
-             summarise(means = mean(ThreeDaysFever)) %>%
-             pull(means)
-lines(0:(length(plot_points) - 1), plot_points)
-remove(plot_points)
 
 # NumberDiarEpi - graphs
 vizions_tb %>% ggplot(aes(x = coinf_class, y = NumberDiarEpi,
@@ -1638,7 +1541,7 @@ vizions_tb %>% filter(macroregion == "Centre") %>%
             var(NumberDiarEpi, na.rm = T))
 
 
-# NumberDiarEpi (NON STRATIFIED) (FINAL)
+# NumberDiarEpi (FINAL)
 numberdiarepi_reg_obj = glm(formula = NumberDiarEpi ~ is_coinf *
                          (age_cluster + Gender + macroregion) +
                          SeasonOnset + has_uncommon_virus,
@@ -1674,9 +1577,9 @@ deviance_test(numberdiarepi_reg_obj)
 
 
 
-###############################################
-#  Risk Factors Associated to Common Viruses  #
-###############################################
+########################################################
+#  Risk Factors Associated to Common Viruses (UNUSED)  #
+########################################################
 
 
 # Rotavirus modelling
